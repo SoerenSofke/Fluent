@@ -1,5 +1,7 @@
 % Soeren Sofke, IBS
-% Refereence: https://billbailey.io/2019/05/18/method-chaining-in-matlab/
+% 
+% Refereence: https://en.wikipedia.org/wiki/Fluent_interface
+% MATLAB-example taken from here: https://billbailey.io/2019/05/18/method-chaining-in-matlab/
 
 classdef Calculator    
     properties
