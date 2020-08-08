@@ -1,0 +1,12 @@
+name: pulseCheck VPS
+
+on:
+  schedule:    
+    - cron:  '*/5 * * * *'
+
+jobs:
+  build:
+    runs-on: MATLAB
+    steps:
+    - name: Instrument MATLAB in bacth mode
+      run: matlab -batch 'disp("Hello from VPS")'
