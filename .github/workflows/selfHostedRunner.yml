@@ -1,12 +1,12 @@
-name: pulseCheck VPS
+name: self-hosted runner
 
 on:
   schedule:    
     - cron:  '*/5 * * * *'
 
 jobs:
-  build:
+  pulseCheck:
     runs-on: MATLAB
     steps:
     - name: Instrument MATLAB in bacth mode
-      run: matlab -batch 'disp("Hello from VPS")'
+      run: matlab -batch 'disp("Hello from self-hosted runner")'
