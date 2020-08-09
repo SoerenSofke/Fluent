@@ -2,9 +2,7 @@ classdef Fluent % dynamicprops
     properties (Access = private)
         tab
         
-        isGroup
-        groupTab
-        groupIdx
+        groupItems = {}
     end
     
     methods (Access = public)
@@ -67,35 +65,27 @@ classdef Fluent % dynamicprops
         
         %% Group
         function obj = group(obj, varargin)
-            %%% Form groups
-            subTable = obj.col(varargin{:}).getTable();
-            [obj.groupIdx, obj.groupTab] = findgroups(subTable);
-            
-            %%% Remove group items from table
-            obj.tab = removevars(obj.tab, varargin);
-            
-            %%% Let Fluid know that the user has performed grouping
-            obj.isGroup = true;
+            obj.groupItems = varargin;                        
         end
         
         %% Aggregator -- Descriptive statistics, change size and names of table
         %%% TODO: Discuss if this is a reasonable strategy
-        function obj = mean(obj)
-            if obj.isGroup
-                obj.groupTab.mean = splitapply(@mean, obj.tab, obj.groupIdx);
-                obj.tab = obj.groupTab;
-                obj = obj.addRowIdx;
-                obj.isGroup = false;
-            else
+        function obj = mean(obj, varargin)
+            if isempty(obj.groupItems)
                 thisVariableNames = obj.tab.Properties.VariableNames;
                 thisMeans = nan(size(thisVariableNames));
                 
                 for idx = 1:numel(thisVariableNames)
                     data = obj.tab.(thisVariableNames{idx});
-                    thisMeans(idx) = mean(data);
+                    if (isnumeric(data) || islogical(data))
+                        thisMeans(idx) = mean(data);
+                    end
                 end
                 
                 obj.tab = table(thisMeans', 'VariableNames', {'mean'}, 'RowNames', thisVariableNames);
+            else                
+                obj.tab = varfun(@mean, obj.tab, 'InputVariables', varargin, 'GroupingVariables', obj.groupItems);                                
+                obj.groupItems = {};
             end
         end
         

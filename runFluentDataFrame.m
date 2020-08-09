@@ -11,8 +11,8 @@ d3 = drinks.head(4).tail(3) %% Instance itself is not mutated, but along the met
 d4 = drinks.col('beer_servings', 'spirit_servings', 'wine_servings').head()
 d5 = drinks.col('beer_servings', 'wine_servings').mean.round
 d6 = drinks.row(12:15, 20).col('beer_servings')
-d6 = drinks.row(12:15, 20).col('beer_servings').mean
-d7 = drinks.group('continent', 'country').col('beer_servings').mean
+d6 = drinks.row(12:15, 20).mean
+d7 = drinks.group('continent').mean('beer_servings')
 
 
 %disp(drinks)
@@ -21,7 +21,8 @@ d7 = drinks.group('continent', 'country').col('beer_servings').mean
 load patients
 patients = Fluent(table(Gender, Smoker, Height, Weight));
 p1 = patients.group('Gender', 'Smoker')
-p2 = patients.group('Gender', 'Smoker').col('Height').mean
+p2 = patients.group('Gender', 'Smoker').mean('Height')
+p3 = patients.col('Smoker', 'Height')
 
 
 
