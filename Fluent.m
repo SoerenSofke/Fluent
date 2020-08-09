@@ -85,11 +85,11 @@ classdef Fluent % dynamicprops
         function obj = floor(obj)
             obj = obj.mathematics(@floor);
         end
-
+        
         function obj = round(obj)
             obj = obj.mathematics(@round);
         end
-
+        
         function obj = ceil(obj)
             obj = obj.mathematics(@round);
         end
@@ -144,6 +144,8 @@ classdef Fluent % dynamicprops
         end
         
         function colKeep = colFilterMath(obj)
+            obj = obj.removeCol('GroupCount');
+            
             thisColumns = obj.tab.Properties.VariableNames;
             isValidColName = setdiff(thisColumns, obj.groupItems);
             
@@ -159,6 +161,7 @@ classdef Fluent % dynamicprops
                     colKeep{end+1} = isValidColName{idx};
                 end
             end
+            
         end
         
         function tab = removeColPrefix(~, tab)
@@ -189,14 +192,28 @@ classdef Fluent % dynamicprops
             obj.tab = obj.removeColPrefix(obj.tab);
             obj.groupItems = {};
             
-            obj = obj.addRowIdx;            
+            obj = obj.addRowIdx;
         end
-
-        function obj = mathematics(obj, fun)
+        
+        function obj = mathematics(obj, fun, varargin)
             rNames = obj.tab.Row;
-            obj.tab = varfun(fun, obj.tab);
+            
+            if isempty(varargin)
+                inputVariables = obj.colFilterMath;
+            else
+                inputVariables = varargin;
+            end
+            
+            obj.tab = varfun(fun, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);
             obj.tab = obj.removeColPrefix(obj.tab);
             obj.tab.Row = rNames;
+        end
+        
+        function obj = removeCol(obj, varargin)
+            defaulColNames = obj.tab.Properties.VariableNames;
+            keep = setdiff(defaulColNames, varargin{:});
+            remove = setdiff(defaulColNames, keep);
+            obj.tab = removevars(obj.tab, remove);
         end
         
         function thisTable = getTable(obj)

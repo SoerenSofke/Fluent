@@ -15,9 +15,10 @@ d7 = drinks.group('continent').mean('beer_servings')
 d8 = drinks.row(12:15, 20).min
 d9 = drinks.row(12:15, 20).mean
 d10 = drinks.row(12:15, 20).max
-d11 = drinks.row(12:15, 20).mean.floor
-d12 = drinks.row(12:15, 20).mean.round
-d13 = drinks.row(12:15, 20).mean.ceil
+d11 = drinks.row(12:15, 20).floor
+d12 = drinks.row(12:15, 20).round
+d13 = drinks.row(12:15, 20).ceil
+d14 = drinks.row(12:15, 20).mean.round
 
 
 
@@ -30,8 +31,4 @@ p1 = patients.group('Gender', 'Smoker')
 p2 = patients.group('Gender', 'Smoker').mean('Height')
 p3 = patients.col('Smoker', 'Height')
 p4 = patients.group('Gender').group('Smoker').mean
-
-
-
-
 
