@@ -54,7 +54,7 @@ classdef Fluent % dynamicprops
         %%% https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.filter.html
         function obj = col(obj, varargin)
             thisColumns = obj.tab.Properties.VariableNames;
-            remove = setdiff(thisColumns, varargin);
+            remove = setdiff(thisColumns, [obj.groupItems(:)', varargin(:)']);
             obj.tab = removevars(obj.tab, remove);
         end
         
@@ -69,16 +69,16 @@ classdef Fluent % dynamicprops
         end
         
         %% Aggregator -- Descriptive statistics, change size and names of table
-        function obj = min(obj, varargin)
-            obj = obj.statistics(@min, varargin{:});
+        function obj = min(obj)
+            obj = obj.statistics(@min);
         end
         
-        function obj = mean(obj, varargin)
-            obj = obj.statistics(@mean, varargin{:});
+        function obj = mean(obj)
+            obj = obj.statistics(@mean);
         end
         
-        function obj = max(obj, varargin)
-            obj = obj.statistics(@max, varargin{:});
+        function obj = max(obj)
+            obj = obj.statistics(@max);
         end
         
         %% Operator -- Mathmatical operations that manipulates values without changing size and names of table
@@ -181,13 +181,9 @@ classdef Fluent % dynamicprops
             tab.Properties.VariableNames = strippedColNames;
         end
         
-        function obj = statistics(obj, fun, varargin)
-            if isempty(varargin)
-                inputVariables = obj.colFilterMath;
-            else
-                inputVariables = varargin;
-            end
-            
+        function obj = statistics(obj, fun)            
+            inputVariables = obj.colFilterMath;
+
             obj.tab = varfun(fun, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);
             obj.tab = obj.removeColPrefix(obj.tab);
             obj.groupItems = {};
@@ -195,18 +191,16 @@ classdef Fluent % dynamicprops
             obj = obj.addRowIdx;
         end
         
-        function obj = mathematics(obj, fun, varargin)
+        function obj = mathematics(obj, fun)
             rNames = obj.tab.Row;
-            
-            if isempty(varargin)
-                inputVariables = obj.colFilterMath;
-            else
-                inputVariables = varargin;
-            end
+                        
+            inputVariables = obj.colFilterMath;            
             
             obj.tab = varfun(fun, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);
             obj.tab = obj.removeColPrefix(obj.tab);
             obj.tab.Row = rNames;
+            
+            obj = obj.removeCol('GroupCount');
         end
         
         function obj = removeCol(obj, varargin)
