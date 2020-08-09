@@ -4,7 +4,18 @@
 close all;
 clc
 
+%%
+load patients
+patients = Fluent(table(Gender, Smoker, Height, Weight));
+p1 = patients.group('Gender', 'Smoker')
+p2 = patients.group('Smoker').mean
+p3 = patients.col('Smoker', 'Height')
+p4 = patients.group('Gender').group('Smoker').mean
+
+%%
 drinks = Fluent('http://bit.ly/drinksbycountry');
+disp(drinks)
+
 d1 = drinks.head(2) %% Instance itself is not mutated
 d2 = drinks.tail(1) %% Instance itself is not mutated
 d3 = drinks.head(4).tail(3) %% Instance itself is not mutated, but along the method chain states mutate
@@ -20,15 +31,4 @@ d12 = drinks.row(12:15, 20).round
 d13 = drinks.row(12:15, 20).ceil
 d14 = drinks.row(12:15, 20).mean.round
 
-
-
-disp(drinks)
-
-%%
-load patients
-patients = Fluent(table(Gender, Smoker, Height, Weight));
-p1 = patients.group('Gender', 'Smoker')
-p2 = patients.group('Smoker').mean
-p3 = patients.col('Smoker', 'Height')
-p4 = patients.group('Gender').group('Smoker').mean
-
+Fluent('http://bit.ly/drinksbycountry').group('continent').mean.bar('continent').print('drinks.svg')

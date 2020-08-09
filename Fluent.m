@@ -1,8 +1,8 @@
 classdef Fluent % dynamicprops
     properties (Access = private)
         tab
-        
         groupItems = {}
+        hFigure
     end
     
     methods (Access = public)
@@ -94,6 +94,51 @@ classdef Fluent % dynamicprops
             obj = obj.mathematics(@round);
         end
         
+        %% Plotting
+        function [obj, hFigure] = bar(obj, x, varargin)
+            obj = obj.removeCol('GroupCount');
+            defaultColNames = obj.tab.Properties.VariableNames;
+            
+            y = [];
+            legendString = {};
+            for idx = 1:numel(defaultColNames)
+                thisColName = defaultColNames{idx};
+                thisData = obj.tab.(thisColName);
+                
+                if isequal(thisColName, x)
+                    xTickLabels = thisData;
+                    continue
+                end
+                
+                if isnumeric(thisData)
+                    y = [y obj.tab.(thisColName)];
+                    legendString{end+1} = thisColName;
+                end
+            end
+            
+            hFigure = figure();
+            positionSize = hFigure.OuterPosition;
+            goldenFactor = (1 + sqrt(5)) * 0.5;
+            
+            positionSize(3) = positionSize(4) * goldenFactor; %% make wider
+            positionSize(2) = positionSize(2) / 2; %% move down
+            hFigure.OuterPosition = positionSize;
+            
+            
+            clf; hold on; box on; grid on;
+            bar(y)
+            legend(legendString, 'interpreter', 'none', 'location', 'northeastoutside');
+            
+            xticks(1:size(y, 1))
+            xticklabels(xTickLabels)
+            set(gca,'LooseInset',get(gca,'TightInset'))
+        end
+        
+        function obj = print(obj, filepath)
+            fileFormat = filepath(end-2:end);            
+            print(obj.hFigure, filepath, sprintf('-d%s', fileFormat))
+        end
+        
         %% Utilitiy -- Overwrite default disp() to have a more appleaing view to Fluent Data Frames
         function disp(obj)
             if height(obj.tab) <= 8
@@ -181,9 +226,9 @@ classdef Fluent % dynamicprops
             tab.Properties.VariableNames = strippedColNames;
         end
         
-        function obj = statistics(obj, fun)            
+        function obj = statistics(obj, fun)
             inputVariables = obj.colFilterMath;
-
+            
             obj.tab = varfun(fun, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);
             obj.tab = obj.removeColPrefix(obj.tab);
             obj.groupItems = {};
@@ -193,8 +238,8 @@ classdef Fluent % dynamicprops
         
         function obj = mathematics(obj, fun)
             rNames = obj.tab.Row;
-                        
-            inputVariables = obj.colFilterMath;            
+            
+            inputVariables = obj.colFilterMath;
             
             obj.tab = varfun(fun, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);
             obj.tab = obj.removeColPrefix(obj.tab);
