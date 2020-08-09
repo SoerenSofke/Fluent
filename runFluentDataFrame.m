@@ -8,7 +8,7 @@ d1 = drinks.head(2) %% Instance itself is not mutated
 d2 = drinks.tail(1) %% Instance itself is not mutated
 
 
-d3 = drinks.head(4).tail(3) %% Instance itself is not mutated, but alog the method chaing states mutate
+d3 = drinks.head(4).tail(3) %% Instance itself is not mutated, but along the method chain states mutate
 
 disp(drinks)
 
