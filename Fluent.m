@@ -54,7 +54,7 @@ classdef Fluent % dynamicprops
         %%% https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.filter.html
         function obj = col(obj, varargin)
             thisColumns = obj.tab.Properties.VariableNames;
-            remove = setdiff(thisColumns, varargin);
+            remove = setdiff(thisColumns, varargin);            
             obj.tab = removevars(obj.tab, remove);
         end
         
@@ -65,34 +65,29 @@ classdef Fluent % dynamicprops
         
         %% Group
         function obj = group(obj, varargin)
-            obj.groupItems = varargin;                        
+            obj.groupItems{end+1} = varargin{:};
         end
         
         %% Aggregator -- Descriptive statistics, change size and names of table
-        %%% TODO: Discuss if this is a reasonable strategy
         function obj = mean(obj, varargin)
-            if isempty(obj.groupItems)
-                thisVariableNames = obj.tab.Properties.VariableNames;
-                thisMeans = nan(size(thisVariableNames));
-                
-                for idx = 1:numel(thisVariableNames)
-                    data = obj.tab.(thisVariableNames{idx});
-                    if (isnumeric(data) || islogical(data))
-                        thisMeans(idx) = mean(data);
-                    end
-                end
-                
-                obj.tab = table(thisMeans', 'VariableNames', {'mean'}, 'RowNames', thisVariableNames);
-            else                
-                obj.tab = varfun(@mean, obj.tab, 'InputVariables', varargin, 'GroupingVariables', obj.groupItems);                                
-                obj.groupItems = {};
+            if isempty(varargin)
+                inputVariables = obj.colFilterMath;
+            else
+                inputVariables = varargin;
             end
+            
+            obj.tab = varfun(@mean, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);            
+            obj.tab = obj.removeColPrefix(obj.tab);
+            obj.groupItems = {};
+            
+            obj = obj.addRowIdx;            
         end
         
         %% Operator -- Mathmatical operations that manipulates values without changing size and names of table
         function obj = round(obj)
             rNames = obj.tab.Row;
             obj.tab = varfun(@round, obj.tab);
+            obj.tab = obj.removeColPrefix(obj.tab);
             obj.tab.Row = rNames;
         end
         
@@ -144,6 +139,43 @@ classdef Fluent % dynamicprops
                 websave(filename, url);
             end
         end
+        
+        function colKeep = colFilterMath(obj)
+            thisColumns = obj.tab.Properties.VariableNames;
+            isValidColName = setdiff(thisColumns, obj.groupItems);
+
+            thiIsNumeric = varfun(@isnumeric, obj.tab);            
+            thiIsNumeric = obj.removeColPrefix(thiIsNumeric);
+            
+            thiIsLogical = varfun(@islogical, obj.tab);
+            thiIsLogical = obj.removeColPrefix(thiIsLogical);
+
+            colKeep = {};
+            for idx = 1:numel(isValidColName)
+                if thiIsNumeric.(isValidColName{idx}) || thiIsLogical.(isValidColName{idx})
+                    colKeep{end+1} = isValidColName{idx};
+                end
+            end
+        end
+        
+        function tab = removeColPrefix(~, tab)
+            defaultColNames = tab.Properties.VariableNames;
+            idxDelimiter = strfind(defaultColNames, '_');
+            
+            strippedColNames = {};
+            for idx = 1:numel(idxDelimiter)
+                if isempty(idxDelimiter{idx})
+                    strippedColNames{idx} = defaultColNames{idx};
+                else
+                    thisName = defaultColNames{idx};
+                    strippedColNames{idx} = thisName(idxDelimiter{idx}(1)+1:end);
+                end
+            end
+            
+            tab.Properties.VariableNames = strippedColNames;
+        end
+            
+            
         
         function thisTable = getTable(obj)
             thisTable = obj.tab;
