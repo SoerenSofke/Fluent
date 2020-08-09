@@ -9,13 +9,19 @@ d1 = drinks.head(2) %% Instance itself is not mutated
 d2 = drinks.tail(1) %% Instance itself is not mutated
 d3 = drinks.head(4).tail(3) %% Instance itself is not mutated, but along the method chain states mutate
 d4 = drinks.col('beer_servings', 'spirit_servings', 'wine_servings').head()
-
-d6 = drinks.row(12:15, 20).col('beer_servings')
-d7 = drinks.row(12:15, 20).mean
-d8 = drinks.group('continent').mean('beer_servings')
 d5 = drinks.col('beer_servings', 'wine_servings').mean.round
+d6 = drinks.row(12:15, 20).col('beer_servings')
+d7 = drinks.group('continent').mean('beer_servings')
+d8 = drinks.row(12:15, 20).min
+d9 = drinks.row(12:15, 20).mean
+d10 = drinks.row(12:15, 20).max
+d11 = drinks.row(12:15, 20).mean.floor
+d12 = drinks.row(12:15, 20).mean.round
+d13 = drinks.row(12:15, 20).mean.ceil
 
-%disp(drinks)
+
+
+disp(drinks)
 
 %%
 load patients

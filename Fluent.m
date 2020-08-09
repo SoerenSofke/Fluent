@@ -54,7 +54,7 @@ classdef Fluent % dynamicprops
         %%% https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.filter.html
         function obj = col(obj, varargin)
             thisColumns = obj.tab.Properties.VariableNames;
-            remove = setdiff(thisColumns, varargin);            
+            remove = setdiff(thisColumns, varargin);
             obj.tab = removevars(obj.tab, remove);
         end
         
@@ -69,26 +69,29 @@ classdef Fluent % dynamicprops
         end
         
         %% Aggregator -- Descriptive statistics, change size and names of table
+        function obj = min(obj, varargin)
+            obj = obj.statistics(@min, varargin{:});
+        end
+        
         function obj = mean(obj, varargin)
-            if isempty(varargin)
-                inputVariables = obj.colFilterMath;
-            else
-                inputVariables = varargin;
-            end
-            
-            obj.tab = varfun(@mean, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);            
-            obj.tab = obj.removeColPrefix(obj.tab);
-            obj.groupItems = {};
-            
-            obj = obj.addRowIdx;            
+            obj = obj.statistics(@mean, varargin{:});
+        end
+        
+        function obj = max(obj, varargin)
+            obj = obj.statistics(@max, varargin{:});
         end
         
         %% Operator -- Mathmatical operations that manipulates values without changing size and names of table
+        function obj = floor(obj)
+            obj = obj.mathematics(@floor);
+        end
+
         function obj = round(obj)
-            rNames = obj.tab.Row;
-            obj.tab = varfun(@round, obj.tab);
-            obj.tab = obj.removeColPrefix(obj.tab);
-            obj.tab.Row = rNames;
+            obj = obj.mathematics(@round);
+        end
+
+        function obj = ceil(obj)
+            obj = obj.mathematics(@round);
         end
         
         %% Utilitiy -- Overwrite default disp() to have a more appleaing view to Fluent Data Frames
@@ -143,13 +146,13 @@ classdef Fluent % dynamicprops
         function colKeep = colFilterMath(obj)
             thisColumns = obj.tab.Properties.VariableNames;
             isValidColName = setdiff(thisColumns, obj.groupItems);
-
-            thiIsNumeric = varfun(@isnumeric, obj.tab);            
+            
+            thiIsNumeric = varfun(@isnumeric, obj.tab);
             thiIsNumeric = obj.removeColPrefix(thiIsNumeric);
             
             thiIsLogical = varfun(@islogical, obj.tab);
             thiIsLogical = obj.removeColPrefix(thiIsLogical);
-
+            
             colKeep = {};
             for idx = 1:numel(isValidColName)
                 if thiIsNumeric.(isValidColName{idx}) || thiIsLogical.(isValidColName{idx})
@@ -174,8 +177,27 @@ classdef Fluent % dynamicprops
             
             tab.Properties.VariableNames = strippedColNames;
         end
+        
+        function obj = statistics(obj, fun, varargin)
+            if isempty(varargin)
+                inputVariables = obj.colFilterMath;
+            else
+                inputVariables = varargin;
+            end
             
+            obj.tab = varfun(fun, obj.tab, 'InputVariables', inputVariables, 'GroupingVariables', obj.groupItems);
+            obj.tab = obj.removeColPrefix(obj.tab);
+            obj.groupItems = {};
             
+            obj = obj.addRowIdx;            
+        end
+
+        function obj = mathematics(obj, fun)
+            rNames = obj.tab.Row;
+            obj.tab = varfun(fun, obj.tab);
+            obj.tab = obj.removeColPrefix(obj.tab);
+            obj.tab.Row = rNames;
+        end
         
         function thisTable = getTable(obj)
             thisTable = obj.tab;
