@@ -135,7 +135,7 @@ classdef Fluent % dynamicprops
         end
         
         function obj = print(obj, filepath)
-            fileFormat = filepath(end-2:end);            
+            fileFormat = filepath(end-2:end);
             print(obj.hFigure, filepath, sprintf('-d%s', fileFormat))
         end
         
