@@ -1,4 +1,4 @@
 image::https://github.com/soerensofke/MatlabDataFrame/workflows/self-hosted%20runner/badge.svg[]
 
-Fluent Data Frame for MATLAB
-----------------------------
+Fluent – Data Frame for MATLAB
+------------------------------
