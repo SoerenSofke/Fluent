@@ -7,18 +7,18 @@ Fluent – Data Frame for MATLAB
 Past the link below into your MATLAB Command Windows and press return. Done! 
 [source, MATLAB]
 ----
-websave("Fluent.m", "https://bit.ly/Fluent-latest")
+websave('Fluent.m', 'https://bit.ly/Fluent-latest')
 ----
 
 ### Now operate on Data Frames
 Use a table-like structure that is supplemented with expressive methods for lean and fast data analysis and exploration.
 
-### truly fluent
+### Using the fluent interface
 :fluent-pattern: https://en.wikipedia.org/wiki/Fluent_interface
 
 By implementeing the {fluent-pattern}[fluent interface pattern], you can programm in a very compact manner, without assigning intermediate results to variables. Just by chaing multiple method calls.
 
-### by writing less code
+### And write less code
 Build boilerplate-free data analysis application in a language you already know -- MATLAB. 
 
 .An example using Fluent would look like this:
