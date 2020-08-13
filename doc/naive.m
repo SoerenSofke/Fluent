@@ -30,6 +30,8 @@ legendString = cellfun(@(x) strrep(x, '_', ' '), variableNames, 'UniformOutput',
 legend(legendString, 'interpreter', 'none', 'location', 'northeastoutside')
 xticklabels(tid{:,'continent'})
 set(gca, 'LooseInset', get(gca, 'TightInset'))
+set(gca,'fontname', 'Open Sans')
 
 %% Finally, print the figrue to svg
 print('drinks', '-dsvg')
+winopen('drinks.svg')
