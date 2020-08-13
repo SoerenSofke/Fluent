@@ -25,13 +25,11 @@ You can program very compactly without assigning intermediate results to variabl
 
 Build {boiler-plate}[boilerplate]-free data analysis application in a language you already know -- and you will fall in love with MATLAB again. 
 
-.An example using Fluent would look like this:
+_An example using Fluent would look like this:_
 [source, MATLAB]
 ----
 Fluent('https://bit.ly/drink-csv').group('continent').mean.bar('continent').print('drinks.svg')
 ----
 
-.A comparison of alcohol consumption per continent.
-[#img-sunset]
-[caption="Figure 1 – ", link=https://github.com/soerensofke/Fluent/blob/master/doc/drinks.svg]
 image::doc/drinks.svg[drinks.svg]
+_Figure 1 -- Comparison of alcohol consumption per continent._
