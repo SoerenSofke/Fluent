@@ -11,15 +11,19 @@ websave('Fluent.m', 'https://bit.ly/Fluent-latest')
 ----
 
 ### Now operate on Data Frames
-Use a table-like structure that is supplemented with expressive methods for lean and fast data analysis and exploration.
+:panel-data: https://en.wikipedia.org/wiki/Panel_data
 
-### Using the fluent interface
+Use a {panel-data}[table-like structure] that is supplemented with expressive methods for lean and fast data analysis and exploration.
+
+### Use the fluent interface
 :fluent-pattern: https://en.wikipedia.org/wiki/Fluent_interface
 
-By implementeing the {fluent-pattern}[fluent interface pattern], you can programm in a very compact manner, without assigning intermediate results to variables. Just by chaing multiple method calls.
+You can program very compactly without assigning intermediate results to variables. Just by {fluent-pattern}[chaining method calls].
 
 ### And write less code
-Build boilerplate-free data analysis application in a language you already know -- MATLAB. 
+:boiler-plate: https://en.wikipedia.org/wiki/Boilerplate_code
+
+Build {boiler-plate}[boilerplate]-free data analysis application in a language you already know -- and you will fall in love with MATLAB again. 
 
 .An example using Fluent would look like this:
 [source, MATLAB]
@@ -31,43 +35,3 @@ Fluent('https://bit.ly/drink-csv').group('continent').mean.bar('continent').prin
 [#img-sunset]
 [caption="Figure 1 – ", link=https://github.com/soerensofke/Fluent/blob/master/doc/drinks.svg]
 image::doc/drinks.svg[drinks.svg]
-
-.It would propably look something like this in naive MATLAB
-[source, MATLAB]
-----
-%% Load data from web
-thisFilename = websave(tempname, 'https://bit.ly/drink-csv');
-thisTable = readtable(thisFilename);
-
-%% Identify groups across continents
-[g, tid] = findgroups(thisTable(:, 'continent'));
-numContinents = height(tid);
-
-%% Determine average alcohol consume per continent
-thisTable = removevars(thisTable, {'country', 'continent'});
-variableNames = thisTable.Properties.VariableNames;
-numVariables = numel(variableNames);
-
-averageConsume = nan(numContinents, numVariables);
-for idx = 1:numVariables
-    thisVariableName = variableNames{idx};
-    averageConsume(:, idx) = splitapply(@mean, thisTable.(thisVariableName), g);
-end
-
-%% Plot alcohol consume and beautify the figrue
-hFigure = figure();
-positionSize = hFigure.OuterPosition;
-goldenFactor = (1 + sqrt(5)) * 0.5;
-positionSize(3) = positionSize(4) * goldenFactor; %% make wider
-hFigure.OuterPosition = positionSize;
-
-hold on; box on; grid on;
-bar(averageConsume)
-legendString = cellfun(@(x) strrep(x, '_', ' '), variableNames, 'UniformOutput', false);
-legend(legendString, 'interpreter', 'none', 'location', 'northeastoutside')
-xticklabels(tid{:,'continent'})
-set(gca, 'LooseInset', get(gca, 'TightInset'))
-
-%% Finally, print the figrue to svg
-print('drinks', '-dsvg')
-----
