@@ -13,7 +13,7 @@ p3 = patients.col('Smoker', 'Height')
 p4 = patients.group('Gender').group('Smoker').mean
 
 %%
-drinks = Fluent('http://bit.ly/drinksbycountry');
+drinks = Fluent('https://bit.ly/drink-csv');
 disp(drinks)
 
 d1 = drinks.head(2) %% Instance itself is not mutated
@@ -31,4 +31,4 @@ d12 = drinks.row(12:15, 20).round
 d13 = drinks.row(12:15, 20).ceil
 d14 = drinks.row(12:15, 20).mean.round
 
-Fluent('http://bit.ly/drinksbycountry').group('continent').mean.bar('continent').print('drinks.svg')
+Fluent('https://bit.ly/drink-csv').group('continent').mean.bar('continent').print('drinks.svg')

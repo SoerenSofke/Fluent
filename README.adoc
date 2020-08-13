@@ -2,3 +2,38 @@ image::https://github.com/soerensofke/MatlabDataFrame/workflows/self-hosted%20ru
 
 Fluent – Data Frame for MATLAB
 ------------------------------
+
+### Install
+Past the link below into your MATLAB Command Windows and press return. Done! 
+[source, MATLAB]
+----
+websave("Fluent.m", "https://bit.ly/Fluent-latest")
+----
+
+### Now operate on Data Frames
+Use a table-like structure that is supplemented with expressive methods for lean and fast data analysis and exploration.
+
+### truly fluent
+:fluent-pattern: https://en.wikipedia.org/wiki/Fluent_interface
+
+By implementeing the {fluent-pattern}[fluent interface pattern], you can programm in a very compact manner, without assigning intermediate results to variables. Just by chaing multiple method calls.
+
+### by writing less code
+Build boilerplate-free data analysis application in a language you already know -- MATLAB. 
+
+.An example using Fluent would look like this:
+[source, MATLAB]
+----
+Fluent('https://bit.ly/drink-csv').group('continent').mean.bar('continent').print('drinks.svg')
+----
+
+.A comparison of alcohol consumption per continent.
+[#img-sunset]
+[caption="Figure 1 – ", link=https://github.com/soerensofke/Fluent/blob/master/doc/drinks.svg]
+image::doc/drinks.svg[drinks.svg]
+
+.It would propably look something like this in naive MATLAB
+[source, MATLAB]
+----
+include::doc/naive.m[]
+----
