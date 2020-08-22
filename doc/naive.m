@@ -1,10 +1,5 @@
-% Soeren Sofke, IBS
-
-close all;
-clear;
-
-%% Load Data from web
-thisFilename = websave(tempname, 'http://bit.ly/drinksbycountry');
+%% Load data from web
+thisFilename = websave(tempname, 'https://bit.ly/drink-csv');
 thisTable = readtable(thisFilename);
 
 %% Identify groups across continents
@@ -26,16 +21,17 @@ end
 hFigure = figure();
 positionSize = hFigure.OuterPosition;
 goldenFactor = (1 + sqrt(5)) * 0.5;
-
 positionSize(3) = positionSize(4) * goldenFactor; %% make wider
-positionSize(2) = positionSize(2) / 2; %% move down
 hFigure.OuterPosition = positionSize;
 
 hold on; box on; grid on;
 bar(averageConsume)
-legend(variableNames, 'interpreter', 'none', 'location', 'northeastoutside')
+legendString = cellfun(@(x) strrep(x, '_', ' '), variableNames, 'UniformOutput', false);
+legend(legendString, 'interpreter', 'none', 'location', 'northeastoutside')
 xticklabels(tid{:,'continent'})
 set(gca, 'LooseInset', get(gca, 'TightInset'))
+set(gca,'fontname', 'Open Sans')
 
 %% Finally, print the figrue to svg
 print('drinks', '-dsvg')
+winopen('drinks.svg')
