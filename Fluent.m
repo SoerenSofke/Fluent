@@ -91,7 +91,7 @@ classdef Fluent % dynamicprops
         end
         
         function obj = ceil(obj)
-            obj = obj.mathematics(@round);
+            obj = obj.mathematics(@ceil);
         end
         
         %% Plotting
